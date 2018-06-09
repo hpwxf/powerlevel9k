@@ -579,11 +579,14 @@ prompt_context() {
     "REMOTE"    "${POWERLEVEL9K_SSH_ICON}"
   )
 
+  local whoami="$(whoami)"
   local content=""
 
-  if [[ "$POWERLEVEL9K_ALWAYS_SHOW_CONTEXT" == true ]] || [[ "$(whoami)" != "$DEFAULT_USER" ]] || [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+  if [[ "$POWERLEVEL9K_ALWAYS_SHOW_CONTEXT" == true ]] \
+  || [[ "$whoami" != "$DEFAULT_USER" && "$DEFAULT_USER_LIST[(r)$whoami]" != "$whoami"  ]] \
+  || [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
 
-      if [[ $(print -P "%#") == '#' ]]; then
+      if [[ $(print -P "%#") == '#' || "$PRIVILEGED_USER_LIST[(r)$whoami]" == "$whoami" ]]; then
         current_state="ROOT"
       elif [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
         current_state="REMOTE"
@@ -592,7 +595,7 @@ prompt_context() {
       content="${POWERLEVEL9K_CONTEXT_TEMPLATE}"
 
   elif [[ "$POWERLEVEL9K_ALWAYS_SHOW_USER" == true ]]; then
-      content="$(whoami)"
+      content="$whoami"
   else
       return
   fi
