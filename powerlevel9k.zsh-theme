@@ -570,25 +570,37 @@ prompt_context() {
   context_states=(
     "ROOT"      "yellow"
     "DEFAULT"   "011"
+    "REMOTE"    "011"
+  )
+  typeset -AH context_icons
+  context_icons=(
+    "ROOT"      "${POWERLEVEL9K_ROOT_ICON}"
+    "DEFAULT"   "${POWERLEVEL9K_USER_ICON}"
+    "REMOTE"    "${POWERLEVEL9K_SSH_ICON}"
   )
 
+  local whoami="$(whoami)"
   local content=""
 
-  if [[ "$POWERLEVEL9K_ALWAYS_SHOW_CONTEXT" == true ]] || [[ "$(whoami)" != "$DEFAULT_USER" ]] || [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+  if [[ "$POWERLEVEL9K_ALWAYS_SHOW_CONTEXT" == true ]] \
+  || [[ "$whoami" != "$DEFAULT_USER" && "$DEFAULT_USER_LIST[(r)$whoami]" != "$whoami"  ]] \
+  || [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
 
-      if [[ $(print -P "%#") == '#' ]]; then
+      if [[ $(print -P "%#") == '#' || "$PRIVILEGED_USER_LIST[(r)$whoami]" == "$whoami" ]]; then
         current_state="ROOT"
+      elif [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+        current_state="REMOTE"
       fi
 
       content="${POWERLEVEL9K_CONTEXT_TEMPLATE}"
 
   elif [[ "$POWERLEVEL9K_ALWAYS_SHOW_USER" == true ]]; then
-      content="$(whoami)"
+      content="$whoami"
   else
       return
   fi
 
-  "$1_prompt_segment" "${0}_${current_state}" "$2" "$DEFAULT_COLOR" "${context_states[$current_state]}" "${content}"
+  "$1_prompt_segment" "${0}_${current_state}" "$2" "$DEFAULT_COLOR" "${context_states[$current_state]}" "${context_icons[$current_state]} ${content}"
 }
 
 ################################################################
