@@ -478,6 +478,13 @@ prompt_battery() {
     fi
   fi
 
+  # override default icon if we are charging or charged
+  if [[ -n "$POWERLEVEL9K_BATTERY_CHARGING_ICON" ]]; then
+    if [[ "$current_state" = 'charging' ]] || [[ "$current_state" = 'charged' ]]; then
+      POWERLEVEL9K_BATTERY_ICON=$POWERLEVEL9K_BATTERY_CHARGING_ICON
+    fi
+  fi
+
   # override the default color if we are using a color level array
   if [[ -n "$POWERLEVEL9K_BATTERY_LEVEL_BACKGROUND" ]] && [[ "${(t)POWERLEVEL9K_BATTERY_LEVEL_BACKGROUND}" =~ "array" ]]; then
     local segment=$(( 100.0 / (${#POWERLEVEL9K_BATTERY_LEVEL_BACKGROUND} - 1 ) ))
