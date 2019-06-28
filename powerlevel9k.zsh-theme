@@ -826,6 +826,18 @@ prompt_dir() {
     local delim=$(echo -n $POWERLEVEL9K_SHORTEN_DELIMITER)
 
     case "$POWERLEVEL9K_SHORTEN_STRATEGY" in
+      truncate_reduced_width)
+        local max_length=$(( COLUMNS - POWERLEVEL9K_SHORTEN_DIR_LENGTH ))
+        if [ ${#current_path} -gt $max_length ]; then
+          current_path=$POWERLEVEL9K_SHORTEN_DELIMITER${current_path:(-max_length)}
+        fi
+      ;;
+      truncate_relative_width)
+        local max_length=$(( COLUMNS * POWERLEVEL9K_SHORTEN_DIR_LENGTH / 100 ))
+        if [ ${#current_path} -gt $max_length ]; then
+          current_path=$POWERLEVEL9K_SHORTEN_DELIMITER${current_path:(-max_length)}
+        fi
+      ;;
       truncate_absolute_chars)
         if [ ${#current_path} -gt $(( $POWERLEVEL9K_SHORTEN_DIR_LENGTH + ${#POWERLEVEL9K_SHORTEN_DELIMITER} )) ]; then
           current_path=$POWERLEVEL9K_SHORTEN_DELIMITER${current_path:(-POWERLEVEL9K_SHORTEN_DIR_LENGTH)}
