@@ -632,6 +632,14 @@ prompt_context() {
     "REMOTE"      "yellow"
     "REMOTE_SUDO" "yellow"
   )
+  typeset -AH context_icons
+  context_icons=(
+    "ROOT"         "${POWERLEVEL9K_ROOT_ICON}"
+    "SUDO"         "${POWERLEVEL9K_ROOT_ICON}"
+    "DEFAULT"      "${POWERLEVEL9K_USER_ICON}"
+    "REMOTE"       "${POWERLEVEL9K_SSH_ICON}"
+    "REMOTE_SUDO"  "${POWERLEVEL9K_SSH_ICON}"
+  )
 
   local content=""
 
@@ -655,7 +663,7 @@ prompt_context() {
     current_state="SUDO"
   fi
 
-  "$1_prompt_segment" "${0}_${current_state}" "$2" "$DEFAULT_COLOR" "${context_states[$current_state]}" "${content}"
+  "$1_prompt_segment" "${0}_${current_state}" "$2" "$DEFAULT_COLOR" "${context_states[$current_state]}" "${context_icons[$current_state]} ${content}"
 }
 
 ################################################################
